@@ -1,0 +1,20 @@
+version: "3.9" 
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+  
+  db:
+    image: postgres:14.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: admin
+      POSTGRES_DB: todo
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./tmp/postgresql:/var/lib/postgresql
