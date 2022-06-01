@@ -2,16 +2,13 @@ FROM golang:1.18.2-alpine3.16
 
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum ./
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
+RUN go mod verify
 
-COPY *.go ./
+COPY . .
 
-RUN go build -o /todo
+RUN go install github.com/cosmtrek/air@latest
 
-EXPOSE 8080
-
-RUN pwd
-
-CMD [ "/todo" ]
+CMD ["air"]
