@@ -1,17 +1,34 @@
 package database
 
 import (
+	"fmt"
+	"todo-api/internal/configs"
 	"todo-api/internal/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func Connect() (*gorm.DB, error) {
-	dsn := "host=db user=admin password=password dbname=todo port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+func Init() (*gorm.DB, error) {
+	db, err := connect()
+	if err != nil {
+		return nil, err
+	}
+
+	err = migrate(db)
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+func connect() (*gorm.DB, error) {
+	dbConf := configs.Conf.Database
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Bangkok", dbConf.Host, dbConf.User, dbConf.Password, dbConf.DBName, dbConf.Port)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
 
-func Migrate(db *gorm.DB) error {
+func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(models.Task{})
 }

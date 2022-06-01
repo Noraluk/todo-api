@@ -1,0 +1,7 @@
+port: 8080
+database:
+  host: db
+  user: admin
+  password: password
+  dbname: todo
+  port: 5432

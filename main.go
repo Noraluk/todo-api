@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"todo-api/internal/configs"
 	"todo-api/internal/routes"
@@ -8,12 +9,14 @@ import (
 )
 
 func main() {
-	db, err := database.Connect()
-	if err != nil {
+	configPath := flag.String("config_path", "configs", "set configs path")
+
+	if err := configs.Conf.New(*configPath); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := database.Migrate(db); err != nil {
+	db, err := database.Init()
+	if err != nil {
 		log.Fatal(err)
 	}
 
