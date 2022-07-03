@@ -3,22 +3,34 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-	"todo-api/internal/domains"
 	"todo-api/internal/models"
+	"todo-api/internal/services"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type taskController struct {
-	domains.TaskService
+type TaskControler interface {
+	GetTasks(c *fiber.Ctx) error
+	CreateTask(c *fiber.Ctx) error
+	DeleteTask(c *fiber.Ctx) error
 }
 
-func NewTaskController(taskService domains.TaskService) domains.TaskControler {
-	return &taskController{taskService}
+type taskController struct {
+	taskService services.TaskService
+}
+
+func NewTaskController(taskService services.TaskService) TaskControler {
+	return &taskController{taskService: taskService}
 }
 
 func (ct *taskController) GetTasks(c *fiber.Ctx) error {
-	tasks, err := ct.TaskService.GetTasks()
+	var searchModel models.TaskSearchModel
+	err := c.QueryParser(&searchModel)
+	if err != nil {
+		return fiber.NewError(http.StatusBadRequest, err.Error())
+	}
+
+	tasks, err := ct.taskService.GetTasks(searchModel)
 	if err != nil {
 		return fiber.NewError(http.StatusInternalServerError, "internal server error")
 	}
@@ -32,7 +44,7 @@ func (ct *taskController) CreateTask(c *fiber.Ctx) error {
 		return fiber.NewError(http.StatusBadRequest, err.Error())
 	}
 
-	task, err := ct.TaskService.CreateTask(req)
+	task, err := ct.taskService.CreateTask(req)
 	if err != nil {
 		return fiber.NewError(http.StatusInternalServerError, "internal server error")
 	}
@@ -46,7 +58,7 @@ func (ct *taskController) DeleteTask(c *fiber.Ctx) error {
 		return fiber.NewError(http.StatusBadRequest, err.Error())
 	}
 
-	err = ct.TaskService.DeleteTask(id)
+	err = ct.taskService.DeleteTask(id)
 	if err != nil {
 		return fiber.NewError(http.StatusInternalServerError, "internal server error")
 	}

@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"todo-api/internal/configs"
 	"todo-api/internal/models"
 
@@ -9,18 +10,21 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init() (*gorm.DB, error) {
-	db, err := connect()
+var DB *gorm.DB
+
+func init() {
+	var err error
+	DB, err = connect()
 	if err != nil {
-		return nil, err
+		panic("failed to connect db")
 	}
 
-	err = migrate(db)
+	err = migrate()
 	if err != nil {
-		return nil, err
+		panic("failed to migrate db")
 	}
 
-	return db, nil
+	log.Println("connect to db success")
 }
 
 func connect() (*gorm.DB, error) {
@@ -29,6 +33,6 @@ func connect() (*gorm.DB, error) {
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
 
-func migrate(db *gorm.DB) error {
-	return db.AutoMigrate(models.Task{})
+func migrate() error {
+	return DB.AutoMigrate(models.Task{})
 }

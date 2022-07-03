@@ -1,6 +1,10 @@
 package configs
 
-import "github.com/spf13/viper"
+import (
+	"flag"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	Port     string   `mapstructure:"port"`
@@ -24,20 +28,20 @@ const (
 
 var Conf *Config
 
-func (c *Config) New(path string) error {
+func init() {
+	path := flag.String("config_path", "configs", "set configs path")
+
 	v := viper.New()
-	v.AddConfigPath(path)
+	v.AddConfigPath(*path)
 	v.SetConfigType(configType)
 	v.SetConfigName(configName)
 	v.AutomaticEnv()
 
 	if err := v.ReadInConfig(); err != nil {
-		return err
+		panic(err)
 	}
 
 	if err := v.Unmarshal(&Conf); err != nil {
-		return err
+		panic(err)
 	}
-
-	return nil
 }
