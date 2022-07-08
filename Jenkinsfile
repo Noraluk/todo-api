@@ -1,10 +1,12 @@
 pipeline {
     agent any
      tools {
-        go 'go'
+        go 'go-1.18.3'
     }
     environment {
         GO111MODULE = 'on'
+        CGO_ENABLED = 0 
+        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
     }
     stages {
         stage('Test') {
