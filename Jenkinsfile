@@ -28,6 +28,7 @@ pipeline {
                 echo '${dockerhubUser}'
                 // sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
                 // sh 'docker push shadowshotx/product-go-micro'
+                }
             }
         }
     }
