@@ -4,7 +4,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh 'go test ./...'
+                go test ./...
             }
         }
         stage('Deploy') {
