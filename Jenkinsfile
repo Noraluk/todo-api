@@ -15,9 +15,19 @@ pipeline {
                 sh 'go test ./...'
             }
         }
+        stage("Build") {
+            steps {
+                echo 'Building...'
+                sh 'docker build . -t shadowshotx/product-go-micro'
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
+                withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'dockerhubPassword', usernameVariable: 'dockerhubUser')]) {
+                echo '${dockerhubUser}'
+                // sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
+                // sh 'docker push shadowshotx/product-go-micro'
             }
         }
     }
