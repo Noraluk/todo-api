@@ -18,16 +18,16 @@ pipeline {
         stage("Build") {
             steps {
                 echo 'Building...'
-                sh 'docker build -t todo-api .'
+                sh 'docker build -t noraluk/todo-api .'
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
                 withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'dockerhubPassword', usernameVariable: 'dockerhubUser')]) {
-                echo '${env.dockerhubUser}'
-                // sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
-                // sh 'docker push shadowshotx/product-go-micro'
+                // echo '${env.dockerhubUser}'
+                sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
+                sh 'docker push noraluk/todo-api'
                 }
             }
         }
