@@ -18,7 +18,7 @@ pipeline {
         stage("Build") {
             steps {
                 echo 'Building...'
-                sh 'docker build . -t shadowshotx/product-go-micro'
+                sh 'docker build -t todo-api .'
             }
         }
         stage('Deploy') {
